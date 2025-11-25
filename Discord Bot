@@ -1,0 +1,54 @@
+import discord
+from discord.ext import commands
+import random
+
+description = "Um bot simples, com comandos basicos"
+intents = discord.Intents.default()
+intents.members = True
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='?', description=description , intents=intents)
+
+
+@bot.event
+async def on_ready():
+
+    assert bot.user is not None
+
+    print(f'Logou como {bot.user} (ID: {bot.user.id})')
+    print('------')
+
+
+@bot.command()
+async def somar (ctx, left: int, right: int):
+    # Soma 2 números
+    await ctx.send(left + right)
+
+
+@bot.command(description='Para quando você quiser dar os pontos de um jeito diferente')
+async def escolher (ctx, *choices: str):
+    """Escolhe entre multiplas escolhas."""
+    await ctx.send(random.choice(choices))
+
+
+@bot.command()
+async def repetir (ctx, times: int, content='repetindo...'):
+    """Repete uma mensagem multiplas vezes."""
+    for i in range(times):
+        await ctx.send(content)
+
+
+@bot.command()
+async def entrou (ctx, member: discord.Member):
+    """Diz quando um membro entrou."""
+    if member.joined_at is None:
+        await ctx.send(f'{member} não tem data de entrada.')
+    else:
+        await ctx.send(f'{member} entrou {discord.utils.format_dt(member.joined_at)}')
+
+@bot.command()
+async def lutas (ctx, *lutadores: str):
+    """ Escolhe um vencedor para uma luta """
+    await ctx.send(random.vencedor(lutadores))
+
+bot.run("token")
